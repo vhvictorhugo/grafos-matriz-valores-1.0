@@ -1,0 +1,2 @@
+# Grafos-TPI
+O objetivo do trabalho é projetar e implementar uma biblioteca para manipular grafos não direcionados ponderados. As ponderações são valores reais que devem estar associados às arestas do grafo. A biblioteca deve ser capaz de representar grafos não direcionados ponderados e de fornecer um conjunto de algoritmos em grafos. Deve-se projetar e desenvolver a biblioteca de forma que ela possa ser facilmente utilizada em outros programas.
