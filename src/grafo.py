@@ -51,8 +51,37 @@ class Grafo(object):
         return grau
 
 
+    def densidade(self):
+        return self.tamanho() / self.ordem() #Densidade = numero de arestas dividido pelo numero de vertices
+
+    # "Marca" todos os vertices que podem ser acessados apartir de um vertice "v"
+    def buscaEmProfundidade(self, vertice, marcados = [], verticeRetirado = None):
+        
+        if (verticeRetirado):
+            marcados.append(verticeRetirado)
+
+        marcados.append(vertice)
+        for vizinho in self.retornaVizinhos(vertice):
+           if vizinho not in marcados:
+             self.buscaEmProfundidade(vizinho, marcados)
+
+    #Verifica se um vertice é articulação
+    def articulacao(self, vertice):
+        if vertice not in self.matriz:
+            return False
+        for vizinho in self.retornaVizinhos(vertice): 
+            comVertice = []
+            semVertice = []
+            self.buscaEmProfundidade(vizinho, comVertice)
+            self.buscaEmProfundidade(vizinho, semVertice, vertice)
+            comVertice.sort()
+            semVertice.sort()
+            if (comVertice != semVertice): #compara se ouve alguma mudança nos vertices marcados
+                return True
+        return False
+        
 # arquivo = open('C:\\Users\\victo\\Desktop\\Grafos-TPI\\src\\grafo.txt', 'r')
-arquivo = open('grafo.txt', 'r')
+arquivo = open('./src/grafo.txt', 'r')
 
 n = int(arquivo.readline())
 
@@ -65,6 +94,9 @@ for linha in arquivo:  # implementar método leitura de arquivo
     grafo.atribuiPeso((int(linha[0])), (int(linha[1])), (float(linha[2].replace('\n', ''))))
 
 arquivo.close()
+
+
+
 
 print("Grafo: ", grafo.matriz)
 
@@ -93,3 +125,4 @@ print("Grau Vertice 3: ", grafo.grauVertice(3))
 print("Grau Vertice 4: ", grafo.grauVertice(4))
 
 print("Grau Vertice 5: ", grafo.grauVertice(5))
+
