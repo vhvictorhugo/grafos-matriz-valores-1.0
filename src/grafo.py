@@ -1,5 +1,12 @@
 # https://algoritmosempython.com.br/cursos/algoritmos-python/algoritmos-grafos/representacao-grafos/
 
+class Elemento(object):
+    def __init__(self):
+        self.vertice = 0
+        self.proximo = 0
+        self.marcado = False
+
+
 class Grafo(object):
 
     def __init__(self, n):  # inicializa as estruturas base do grafo
@@ -37,11 +44,10 @@ class Grafo(object):
     def retornaVizinhos(self, vertice):
         vizinhos = []
         for i in range(len(self.matriz)):
-            if self.matriz[vertice-1][i] != 0:
-                vizinhos.append(i+1)
+            if self.matriz[vertice - 1][i] != 0:
+                vizinhos.append(i + 1)
         return vizinhos
-            # execucao
-
+        # execucao
 
     def grauVertice(self, vertice):
         grau = 0
@@ -50,38 +56,120 @@ class Grafo(object):
                 grau += 1
         return grau
 
-
     def densidade(self):
-        return self.tamanho() / self.ordem() #Densidade = numero de arestas dividido pelo numero de vertices
+        return self.tamanho() / self.ordem()  # Densidade = numero de arestas dividido pelo numero de vertices
 
     # "Marca" todos os vertices que podem ser acessados apartir de um vertice "v"
-    def buscaEmProfundidade(self, vertice, marcados = [], verticeRetirado = None):
-        
+    def buscaEmProfundidade(self, vertice, marcados=[], verticeRetirado=None):
+
         if (verticeRetirado):
             marcados.append(verticeRetirado)
 
         marcados.append(vertice)
         for vizinho in self.retornaVizinhos(vertice):
-           if vizinho not in marcados:
-             self.buscaEmProfundidade(vizinho, marcados)
+            if vizinho not in marcados:
+                self.buscaEmProfundidade(vizinho, marcados)
 
-    #Verifica se um vertice é articulação
+    # Verifica se um vertice é articulação
     def articulacao(self, vertice):
         if vertice not in self.matriz:
             return False
-        for vizinho in self.retornaVizinhos(vertice): 
+        for vizinho in self.retornaVizinhos(vertice):
             comVertice = []
             semVertice = []
             self.buscaEmProfundidade(vizinho, comVertice)
             self.buscaEmProfundidade(vizinho, semVertice, vertice)
             comVertice.sort()
             semVertice.sort()
-            if (comVertice != semVertice): #compara se ouve alguma mudança nos vertices marcados
+            if (comVertice != semVertice):  # compara se ouve alguma mudança nos vertices marcados
                 return True
         return False
-        
+
+    # Cria uma copia da matriz de adjacencia e uma lista de vertices, chama a verificacao
+    def verificaCiclo(self):
+        vertices = []
+        matriztemp = []
+        for i in range(len(self.matriz)):
+            vertices.append(Elemento())
+            vertices[i].vertice = i + 1
+        for i in range(len(self.matriz)):
+            matriztemp.append([0] * len(self.matriz))
+            for j in range(len(self.matriz)):
+                matriztemp[i][j] = (self.matriz[i][j])
+        return self.verificacao(vertices, 0, matriztemp)
+
+    # Verifica se possui um ciclo, marcando vertices e excluindo arestas ja visitadas.
+    def verificacao(self, vertices, v, matriztemp):
+        if vertices[v].marcado:
+            return True
+        else:
+            for i in range(len(self.matriz)):
+                if matriztemp[v][i] != 0:
+                    vertices[v].marcado = True
+                    matriztemp[v][i] = 0
+                    matriztemp[i][v] = 0
+                    vertices[v].proximo = i + 1
+                    return self.verificacao(vertices, i, matriztemp)
+        return False
+
+    # Algoritmo de Floyd-Warshall (Aplicado a grafos com ciclos positivos)
+    def menorCaminhoVertice(self, v):
+        matrizL = []
+        matrizR = []
+        infinito = 9999999999999999999
+        n = len(self.matriz)
+        # Inicialização matriz L e R
+        for i in range(n):
+            matrizL.append([infinito] * n)
+            matrizR.append([0] * n)
+        for i in range(n):
+            for j in range(n):
+                if i == j:
+                    matrizL[i][j] = 0
+                else:
+                    if self.matriz[i][j] != 0:
+                        matrizL[i][j] = self.matriz[i][j]
+        for i in range(n):
+            for j in range(n):
+                if matrizL[i][j] != infinito:
+                    matrizR[i][j] = i + 1
+        # Calculo Menor Caminho
+        for k in range(n):
+            for i in range(n):
+                for j in range(n):
+                    if matrizL[i][j] > matrizL[i][k] + matrizL[k][j]:
+                        matrizL[i][j] = matrizL[i][k] + matrizL[k][j]
+                        matrizR[i][j] = matrizR[k][j]
+        self.imprimeDistancia(matrizL[v - 1], v)
+        for i in range(n):
+            self.imprimeCaminhoMinimo(matrizR[v - 1], v, i + 1)
+
+    def imprimeDistancia(self, vetorDistancia, v):
+        for i in range(len(vetorDistancia)):
+            print("Distância entre o vertice", v, "e", i + 1, "=", round(vetorDistancia[i], 2))
+
+    def imprimeCaminhoMinimo(self, vetorCaminho, v1, v2):
+        temp = []
+        vnext = v2
+        for i in range(len(vetorCaminho)):
+            temp.append(vnext)
+            if vetorCaminho[vnext - 1] == 0:
+                print(v1)
+                return
+            elif vetorCaminho[vnext - 1] != v1:
+                vnext = vetorCaminho[vnext - 1]
+            else:
+                break
+        temp.append(v1)
+        temp.reverse()
+        print("Caminho Minimo entre", v1, "e", v2, ":")
+        for vertice in temp:
+            print(" ->", vertice, end="")
+        print("")
+
+
 # arquivo = open('C:\\Users\\victo\\Desktop\\Grafos-TPI\\src\\grafo.txt', 'r')
-arquivo = open('./src/grafo.txt', 'r')
+arquivo = open('grafo.txt', 'r')
 
 n = int(arquivo.readline())
 
@@ -94,9 +182,6 @@ for linha in arquivo:  # implementar método leitura de arquivo
     grafo.atribuiPeso((int(linha[0])), (int(linha[1])), (float(linha[2].replace('\n', ''))))
 
 arquivo.close()
-
-
-
 
 print("Grafo: ", grafo.matriz)
 
@@ -112,9 +197,9 @@ print("Vizinhos Vertice 2", grafo.retornaVizinhos(2))
 
 print("Vizinhos Vertice 3", grafo.retornaVizinhos(3))
 
-print("Vizinhos Vertice 3", grafo.retornaVizinhos(4))
+print("Vizinhos Vertice 4", grafo.retornaVizinhos(4))
 
-print("Vizinhos Vertice 3", grafo.retornaVizinhos(5))
+print("Vizinhos Vertice 5", grafo.retornaVizinhos(5))
 
 print("Grau Vertice 1: ", grafo.grauVertice(1))
 
@@ -126,3 +211,6 @@ print("Grau Vertice 4: ", grafo.grauVertice(4))
 
 print("Grau Vertice 5: ", grafo.grauVertice(5))
 
+print("Possui Ciclo:", grafo.verificaCiclo())
+
+grafo.menorCaminhoVertice(1)
