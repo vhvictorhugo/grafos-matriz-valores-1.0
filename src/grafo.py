@@ -116,7 +116,7 @@ class Grafo(object):
     def menorCaminhoVertice(self, v):
         matrizL = []
         matrizR = []
-        infinito = 9999999999999999999
+        infinito = float("inf")
         n = len(self.matriz)
         # Inicialização matriz L e R
         for i in range(n):
