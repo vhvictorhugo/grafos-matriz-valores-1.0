@@ -370,7 +370,7 @@ class Grafo(object):
         for i in range (len(pais)):
             print("Componente do vértice ", i+1,": ", pais[i])
 
-def lerJson(nomeArquivo):
+    def lerJson(nomeArquivo):
         try:
             with open(f".\\src\\{nomeArquivo}", encoding='utf-8') as meu_json:
                 dados = json.load(meu_json)
@@ -401,60 +401,93 @@ def lerJson(nomeArquivo):
             arquivo.writelines(f"{vertice1} {vertice2} {peso}\n")   
 
 
-        def printMST(self, parent, n):
-            print ("Edge \tWeight")
-            for i in range(1, n):
-                print (parent[i], "-", i, "\t", self.matriz[i][parent[i]])
+    def printMST(self, parent, n):
+        print ("Edge \tWeight")
+        for i in range(1, n):
+            parentAux = parent[i]
+            print (parentAux+1, "-", i+1, "\t", self.matriz[i][parentAux])
 
+    def getParams(self, parent, i):
 
-        def minKey(self, key, mstSet, n):
-    
-            # Initialize min value
-            min = sys.maxsize
-    
+        aresta1 = parent[i]
+        aresta2 = i
+        peso = self.matriz[i][aresta1]
+
+        return aresta1+1, aresta2+1, peso
+
+    def minKey(self, key, mstSet, n):
+ 
+        # Initialize min value
+        min = sys.maxsize
+
+        min_index = 0
+ 
+        for v in range(n):
+            if key[v] < min and mstSet[v] == False:
+                min = key[v]
+                min_index = v
+ 
+        return min_index
+ 
+    # Function to construct and print MST for a graph
+    # represented using adjacency matrix representation
+    def primMST(self, n):
+ 
+        # Key values used to pick minimum weight edge in cut
+        key = [sys.maxsize] * n
+        parent = [None] * n # Array to store constructed MST
+        # Make key 0 so that this vertex is picked as first vertex
+        key[0] = 0
+        mstSet = [False] * n
+ 
+        parent[0] = -1 # First node is always the root of
+ 
+        for cout in range(n):
+ 
+            # Pick the minimum distance vertex from
+            # the set of vertices not yet processed.
+            # u is always equal to src in first iteration
+            u = self.minKey(key, mstSet, n)
+ 
+            # Put the minimum distance vertex in
+            # the shortest path tree
+            mstSet[u] = True
+ 
+            # Update dist value of the adjacent vertices
+            # of the picked vertex only if the current
+            # distance is greater than new distance and
+            # the vertex in not in the shortest path tree
             for v in range(n):
-                if key[v] < min and mstSet[v] == False:
-                    min = key[v]
-                    min_index = v
-    
-            return min_index
-    
-        # Function to construct and print MST for a graph
-        # represented using adjacency matrix representation
-        def primMST(self, n):
-    
-            # Key values used to pick minimum weight edge in cut
-            key = [sys.maxsize] * n
-            parent = [None] * n # Array to store constructed MST
-            # Make key 0 so that this vertex is picked as first vertex
-            key[0] = 0
-            mstSet = [False] * n
-    
-            parent[0] = -1 # First node is always the root of
-    
-            for cout in range(n):
-    
-                # Pick the minimum distance vertex from
-                # the set of vertices not yet processed.
-                # u is always equal to src in first iteration
-                u = self.minKey(key, mstSet, n)
-    
-                # Put the minimum distance vertex in
-                # the shortest path tree
-                mstSet[u] = True
-    
-                # Update dist value of the adjacent vertices
-                # of the picked vertex only if the current
-                # distance is greater than new distance and
-                # the vertex in not in the shortest path tree
-                for v in range(n):
-    
-                    # graph[u][v] is non zero only for adjacent vertices of m
-                    # mstSet[v] is false for vertices not yet included in MST
-                    # Update the key only if graph[u][v] is smaller than key[v]
-                    if self.matriz[u][v] > 0 and mstSet[v] == False and key[v] > self.matriz[u][v]:
-                            key[v] = self.matriz[u][v]
-                            parent[v] = u
-    
-            self.printMST(parent, n)
+ 
+                # graph[u][v] is non zero only for adjacent vertices of m
+                # mstSet[v] is false for vertices not yet included in MST
+                # Update the key only if graph[u][v] is smaller than key[v]
+                if self.matriz[u][v] > 0 and mstSet[v] == False and key[v] > self.matriz[u][v]:
+                        key[v] = self.matriz[u][v]
+                        parent[v] = u
 
+        self.printMST(parent, n)
+
+        return parent
+
+
+
+quantidadeComponentes, vizinhos = grafo.componentesConexas(n)
+print("Numero de componentes conexas: ", quantidadeComponentes)
+grafo.mostraVizinhosComponente(vizinhos)
+
+
+ 
+mst = grafo.primMST(n)
+
+# Contributed by Divyanshu Mehta
+
+# Criando e escrevendo em arquivos de texto (modo 'w'). escrita
+arquivo = open('arq01.txt','w')
+
+arquivo.write(str (n) + '\n')
+
+for i in range(1, n):
+    aresta1, aresta2, peso = grafo.getParams(mst, i)
+    arquivo.write(str (aresta1) + ' ' + str (aresta2) + ' ' + str (peso) + '\n')
+arquivo.close()
