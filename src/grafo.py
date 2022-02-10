@@ -1,5 +1,7 @@
 # https://algoritmosempython.com.br/cursos/algoritmos-python/algoritmos-grafos/representacao-grafos/
 import json
+from tkinter import N
+
 
 class Elemento(object):
     def __init__(self):
@@ -10,7 +12,7 @@ class Elemento(object):
 
 class Grafo(object):
 
-    def __init__(self, n):  # inicializa as estruturas base do grafo
+    def __init__(self):  # inicializa as estruturas base do grafo
 
         self.matriz = []
 
@@ -364,11 +366,21 @@ class Grafo(object):
         for i in range (len(pais)):
             print("Componente do vértice ", i+1,": ", pais[i])
 
-def lerJson():
-        with open(".\\src\\Grafo.json", encoding='utf-8') as meu_json:
-            dados = json.load(meu_json)
+def lerJson(nomeArquivo):
+        try:
+            with open(f".\\src\\{nomeArquivo}", encoding='utf-8') as meu_json:
+                dados = json.load(meu_json)
+        except:
+            print("arquivo nao encontrado, verifique se esta na pasta src")
+            
 
-        arquivo = open(".\\src\\grafo.txt", "w+")
+        nomeArquivo = nomeArquivo.replace("json","txt")
+        print("n:", nomeArquivo)
+        try:
+            arquivo = open(f".\\src\\{nomeArquivo}", "w+")
+        except:
+            print("Erro ao abrir o arquivo")
+
         arquivo.writelines(f"{ dados['data']['nodes']['length'] }\n")
 
         arestas = []
@@ -386,67 +398,4 @@ def lerJson():
 
 
 
-# arquivo = open('C:\\Users\\victo\\Desktop\\Grafos-TPI\\src\\grafo.txt', 'r')
-
-
-
-
-arquivo = open('.\\src\\grafo.txt', 'r')
-
-n = int(arquivo.readline())
-
-grafo = Grafo(n)
-
-grafo.inicializaMatriz(n)
-
-for linha in arquivo:  # implementar método leitura de arquivo
-    linha = linha.split(' ')
-    grafo.atribuiPeso((int(linha[0])), (int(linha[1])), (float(linha[2].replace('\n', ''))))
-
-arquivo.close()
-
-grafo.escreverJson()
-
-print("Grafo: ", grafo.matriz)
-
-print("Ordem do Grafo: ", grafo.ordem())
-
-print("Tamanho do Grafo: ", grafo.tamanho())
-
-vizinhos = grafo.retornaVizinhos(1)
-
-print("Vizinhos Vertice 1", grafo.retornaVizinhos(1))
-
-print("Vizinhos Vertice 2", grafo.retornaVizinhos(2))
-
-print("Vizinhos Vertice 3", grafo.retornaVizinhos(3))
-
-print("Vizinhos Vertice 4", grafo.retornaVizinhos(4))
-
-print("Vizinhos Vertice 5", grafo.retornaVizinhos(5))
-
-print("Grau Vertice 1: ", grafo.grauVertice(1))
-
-print("Grau Vertice 2: ", grafo.grauVertice(2))
-
-print("Grau Vertice 3: ", grafo.grauVertice(3))
-
-print("Grau Vertice 4: ", grafo.grauVertice(4))
-
-print("Grau Vertice 5: ", grafo.grauVertice(5))
-
-print("Possui Ciclo:", grafo.verificaCiclo())
-
-grafo.menorCaminhoVertice(1)
-
-grafo.buscaEmLargura(1)
-
-
-print(grafo.densidade())
-
-
-quantidadeComponentes, vizinhos = grafo.componentesConexas(n)
-print("Numero de componentes conexas: ", quantidadeComponentes)
-grafo.mostraVizinhosComponente(vizinhos)
-
-grafo.escreverJson()
+#
