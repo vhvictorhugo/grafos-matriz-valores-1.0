@@ -60,7 +60,7 @@ class Grafo(object):
         return self.tamanho() / self.ordem()  # Densidade = numero de arestas dividido pelo numero de vertices
 
     # "Marca" todos os vertices que podem ser acessados apartir de um vertice "v"
-    def buscaEmProfundidade(self, vertice, marcados=[], verticeRetirado=None):
+    def busca(self, vertice, marcados=[], verticeRetirado=None):
 
         if (verticeRetirado):
             marcados.append(verticeRetirado)
@@ -68,7 +68,7 @@ class Grafo(object):
         marcados.append(vertice)
         for vizinho in self.retornaVizinhos(vertice):
             if vizinho not in marcados:
-                self.buscaEmProfundidade(vizinho, marcados)
+                self.busca(vizinho, marcados)
 
     # Verifica se um vertice é articulação
     def articulacao(self, vertice):
@@ -77,8 +77,8 @@ class Grafo(object):
         for vizinho in self.retornaVizinhos(vertice):
             comVertice = []
             semVertice = []
-            self.buscaEmProfundidade(vizinho, comVertice)
-            self.buscaEmProfundidade(vizinho, semVertice, vertice)
+            self.busca(vizinho, comVertice)
+            self.busca(vizinho, semVertice, vertice)
             comVertice.sort()
             semVertice.sort()
             if (comVertice != semVertice):  # compara se ouve alguma mudança nos vertices marcados
@@ -166,10 +166,133 @@ class Grafo(object):
         for vertice in temp:
             print(" ->", vertice, end="")
         print("")
+    
+    def buscaEmLargura(self, vertice):
+        fila = []
+        marcados = []
+        i = 1
+
+        fila.append(vertice)
+        marcados.append(vertice)
+       
+        matrizArestas = [[0] * len(self.matriz) for _ in range(len(self.matriz))]
+        foraDaBusca = [[0] * len(self.matriz) for _ in range(len(self.matriz))]
+       
+        while len(fila) > 0:
+            v = fila[0]
+            vizinhos = self.retornaVizinhos(v) 
+            
+            for w in vizinhos:
+                if w not in marcados: #se o vertice não foi explorado, o adiciona na fila para ser explorado
+                    matrizArestas[v - 1][w - 1] = 1  # adiciona as arestas na árvore de busca em largura
+                    matrizArestas[w - 1][v - 1] = 1
+                    marcados.append(w)
+                    fila.append(w)
+                elif w in fila:
+                    foraDaBusca[v-1][w-1] = 1
+            fila.remove(v)             #remove o vertice explorado da fila
+
+        print("Ordem de vizitacao dos vertices na busca em largura:")
+        for vertice in marcados:
+            print(' ->',vertice, end= '')
+        print()
+
+        print("Arestas que nao fazem parte da busca em largura:")
+        for i in range(len(foraDaBusca)):
+            for j in range(len(foraDaBusca)):
+                if foraDaBusca[i][j] == 1:
+                    print(f"Aresta {i+1} {j+1}")
+        
+    def verificarEuliriano(self):
+        #verificar se o grafo tem todos os vertices com grau par
+        for i in range(len(self.matriz)):
+            if self.grauVertice(i) % 2 == 1:
+                print("Grafo nao e euliriano vertice", i+1)
+                return False
+
+        #verificar se o grafo é conexo
+        conexo = []
+        self.busca(1, conexo)
+        if len(conexo) != len(self.matriz):
+            print("Grafo nao e euliriano")
+            return False
+        #Se passou dos testes o grafo é euliriano
+        print("Grafo e euliriano")
+
+        copia = [[] * len(self.matriz) for _ in range(len(self.matriz))]
+        for i in range(len(self.matriz)):
+            copia[i] = self.matriz[i].copy()
+        #determinar uma cadeia euliriana fechada com o algoritmo de Fleury
+        self.cadeiaEuliriana()
+        
+  
+    def cadeiaEuliriana(self):
+
+        v0 = 1
+        cadeia = [v0] #cadeia inicia num vertice qualquer
+
+        matriz = [[] * len(self.matriz) for _ in range(len(self.matriz))]
+        for i in range(len(self.matriz)):
+            matriz[i] = self.matriz[i].copy()
+        
+        while True:
+            vertice = cadeia[len(cadeia) -1] #vertice a ser explorado é o ultimo na cadeia
+            arestasIncidentes = []
+
+            for  i in range (len(matriz)):
+                if (matriz[vertice-1][i] != 0):
+                    arestasIncidentes.append(i) #arestas incidentes no vertice
+
+            if (len(arestasIncidentes) == 0): #se não há mais arestas o algoritmo chegou ao fim
+                break 
+
+            if (len(arestasIncidentes) == 1): #se há somente uma aresta é ela que vamos atravessar
+                aresta = arestasIncidentes[0]
+
+            else:
+                pos = 1
+               
+                for j in arestasIncidentes: #para cada aresta incidente no vertice
+                    cont = 0
+                    if pos == len(arestasIncidentes): #se é a ultima aresta no vetor de arestas inicidentes +
+                        aresta = j                    # então as outras são ponte, escolheremos essa para atravessar
+                    else:
+                        for aresta in matriz[j]:      #conta a quantidade de arestas incidentes no vertice ligado ao +                                                                   
+                            if aresta != 0:           # vertice atual pela aresta atual.
+                                cont +=1
+                        if (cont > 1):                #se há mais de uma aresta, a aresta atual não é uma ponte
+                            aresta = j
+                            break
+                        pos += 1
+            matriz[vertice-1][aresta] = 0            #Marca a aresta como explorada
+            matriz[aresta][vertice-1] = 0            #Marca a aresta como explorada
+            cadeia.append(aresta+1)
+
+        print("Cadeia euliriana no grafo: ", cadeia)
+            
+
+
+
+
+
+        
+        
+
+
+        
+
+        
+        
+        
+        
+
+
+
+        
 
 
 # arquivo = open('C:\\Users\\victo\\Desktop\\Grafos-TPI\\src\\grafo.txt', 'r')
-arquivo = open('grafo.txt', 'r')
+arquivo = open('.\\src\\grafo2.txt', 'r')
 
 n = int(arquivo.readline())
 
@@ -214,3 +337,5 @@ print("Grau Vertice 5: ", grafo.grauVertice(5))
 print("Possui Ciclo:", grafo.verificaCiclo())
 
 grafo.menorCaminhoVertice(1)
+
+grafo.buscaEmLargura(1)
