@@ -1,11 +1,7 @@
 # https://algoritmosempython.com.br/cursos/algoritmos-python/algoritmos-grafos/representacao-grafos/
 import json
-<<<<<<< HEAD
 from tkinter import N
-
-=======
-import sys # Library for INT_MAX
->>>>>>> 1e44a495c482dec24329315107900f8526376ddf
+import sys
 
 class Elemento(object):
     def __init__(self):
@@ -402,10 +398,10 @@ class Grafo(object):
 
 
     def printMST(self, parent, n):
-        print ("Edge \tWeight")
+        print (n)
         for i in range(1, n):
             parentAux = parent[i]
-            print (parentAux+1, "-", i+1, "\t", self.matriz[i][parentAux])
+            print (parentAux+1, " ", i+1, "\t", self.matriz[i][parentAux])
 
     def getParams(self, parent, i):
 
@@ -416,8 +412,7 @@ class Grafo(object):
         return aresta1+1, aresta2+1, peso
 
     def minKey(self, key, mstSet, n):
- 
-        # Initialize min value
+
         min = sys.maxsize
 
         min_index = 0
@@ -429,39 +424,23 @@ class Grafo(object):
  
         return min_index
  
-    # Function to construct and print MST for a graph
-    # represented using adjacency matrix representation
     def primMST(self, n):
- 
-        # Key values used to pick minimum weight edge in cut
+        ##tirado do sitehttps://www.geeksforgeeks.org/prims-minimum-spanning-tree-mst-greedy-algo-5/ e adptado para o tp
         key = [sys.maxsize] * n
-        parent = [None] * n # Array to store constructed MST
-        # Make key 0 so that this vertex is picked as first vertex
+        parent = [None] * n
         key[0] = 0
         mstSet = [False] * n
  
-        parent[0] = -1 # First node is always the root of
+        parent[0] = -1 
  
         for cout in range(n):
  
-            # Pick the minimum distance vertex from
-            # the set of vertices not yet processed.
-            # u is always equal to src in first iteration
             u = self.minKey(key, mstSet, n)
- 
-            # Put the minimum distance vertex in
-            # the shortest path tree
+
             mstSet[u] = True
- 
-            # Update dist value of the adjacent vertices
-            # of the picked vertex only if the current
-            # distance is greater than new distance and
-            # the vertex in not in the shortest path tree
+
             for v in range(n):
  
-                # graph[u][v] is non zero only for adjacent vertices of m
-                # mstSet[v] is false for vertices not yet included in MST
-                # Update the key only if graph[u][v] is smaller than key[v]
                 if self.matriz[u][v] > 0 and mstSet[v] == False and key[v] > self.matriz[u][v]:
                         key[v] = self.matriz[u][v]
                         parent[v] = u
@@ -472,22 +451,7 @@ class Grafo(object):
 
 
 
-quantidadeComponentes, vizinhos = grafo.componentesConexas(n)
-print("Numero de componentes conexas: ", quantidadeComponentes)
-grafo.mostraVizinhosComponente(vizinhos)
 
 
- 
-mst = grafo.primMST(n)
 
-# Contributed by Divyanshu Mehta
 
-# Criando e escrevendo em arquivos de texto (modo 'w'). escrita
-arquivo = open('arq01.txt','w')
-
-arquivo.write(str (n) + '\n')
-
-for i in range(1, n):
-    aresta1, aresta2, peso = grafo.getParams(mst, i)
-    arquivo.write(str (aresta1) + ' ' + str (aresta2) + ' ' + str (peso) + '\n')
-arquivo.close()

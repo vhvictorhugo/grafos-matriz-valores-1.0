@@ -42,49 +42,85 @@ def escolherArquivo(mGrafo):
 def menuFuncoes():
     while True:
         printMenu()
-        print("1) Busca em Largura")
-        print("2) Numero de componentes conexas do grafo e os vértices de cada componente")
-        print("3) Verificar se possui ciclo")
-        print("4) Densidade")
-        print("5) Verificar se um vertice e articulacao")
-        print("6) Verificar se um grafo é euleriano ")
+        print("1) Ordem do grafo")
+        print("2) Tamanho do grafo")
+        print("3) Densidade")
+        print("4) Vizinho de um vertice")
+        print("5) Grau de um vertice")
+        print("6) Verificar se um vertice e articulacao")
+        print("7) Busca em Largura")
+        print("8) Numero de componentes conexas do grafo e os vértices de cada componente")
+        print("9) Verificar se possui ciclo")
+        print("10) Verificar se um grafo é euleriano ")
+        print("11) Distancia e caminho minimo ")
+        print("12) A árvore geradora mínima de um grafo ")
         print("0) Sair")
+        
         escolha = int(input("->"))
 
         if mGrafo == None: 
             print("Primeiro Inicialize o Grafo")
-            break
+         
            
         elif escolha == 1:
-            vertice = int(input("Escolha um vertice pra comecar:\n->"))
-            mGrafo.buscaEmLargura(vertice)
+            print("Ordem do grafo: ",mGrafo.ordem())
+      
 
         elif escolha == 2:
-            mGrafo.componentesConexas()
-                          
+            print("Tamanho do grafo: ",mGrafo.tamanho())
+     
         elif escolha == 3:
-            print("O Grafo possui ciclo") if mGrafo.verificaCiclo() else print("O Grafo nao possui ciclo")
-
+            print("A desidade do grafo e ",mGrafo.densidade())
+              
         elif escolha == 4:
-            print(F"A desidade do grafo e {mGrafo.densidade()}")
-            
+            vertice = int(input("Escolha um verticer para saber seu vizinhos:\n->"))
+            print("Vizinho de um vertice:",mGrafo.retornaVizinhos(vertice))
+              
         elif escolha == 5:
+            vertice = int(input("Escolha um verticer:\n->"))
+            print("Vertice de grau:",mGrafo.grauVertice(vertice))
+             
+        elif escolha == 6:
             vertice = int(input("Escolha um vertice pra comecar:\n->"))
             print("O vertice e articulacao") if mGrafo.articulacao(vertice) else print("O vertice nao e articulacao") 
                           
-        elif escolha == 6:
-            mGrafo.verificarEuliriano()
+        elif escolha == 7:
+            vertice = int(input("Escolha um vertice pra comecar:\n->"))
+            print("Busca em Largur: ", mGrafo.buscaEmLargura(vertice))
+
+        elif escolha == 8:
+           printCompConex()
+
+        elif escolha == 9:
+            print("O Grafo possui ciclo") if mGrafo.verificaCiclo() else print("O Grafo nao possui ciclo")
+
+        elif escolha == 10:
+             print("Verificar Euleriano: ",mGrafo.verificarEuliriano())
+        
+        elif escolha == 11:
+            print("Menor caminho: ",mGrafo.menorCaminhoVertice(1))
+            
+        elif escolha == 12:
+            printArvoreMinima()
+            
         else:
             break
+def printArvoreMinima():
+    n=mGrafo.ordem()
+    mst = mGrafo.primMST(n)
+    # Criando e escrevendo em arquivos de texto (modo 'w'). escrita
+    arquivo = open('arq01.txt','w')
 
-      
+    arquivo.write(str (n) + '\n')
 
-
-    
-    
-
-
-
+    for i in range(1, n):
+        aresta1, aresta2, peso = mGrafo.getParams(mst, i)
+        arquivo.write(str (aresta1) + ' ' + str (aresta2) + ' ' + str (peso) + '\n')
+    arquivo.close()
+def printCompConex():
+    n=mGrafo.ordem()
+    print("Numero de componentes conexas: ", mGrafo.componentesConexas(n)[0])
+    mGrafo.mostraVizinhosComponente(mGrafo.componentesConexas(n)[1])
 while True:
     printMenu()
     print("1) Escolher o arquivo")
