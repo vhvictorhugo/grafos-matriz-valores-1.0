@@ -1,7 +1,11 @@
 # https://algoritmosempython.com.br/cursos/algoritmos-python/algoritmos-grafos/representacao-grafos/
 import json
+<<<<<<< HEAD
 from tkinter import N
 
+=======
+import sys # Library for INT_MAX
+>>>>>>> 1e44a495c482dec24329315107900f8526376ddf
 
 class Elemento(object):
     def __init__(self):
@@ -397,5 +401,60 @@ def lerJson(nomeArquivo):
             arquivo.writelines(f"{vertice1} {vertice2} {peso}\n")   
 
 
+        def printMST(self, parent, n):
+            print ("Edge \tWeight")
+            for i in range(1, n):
+                print (parent[i], "-", i, "\t", self.matriz[i][parent[i]])
 
-#
+
+        def minKey(self, key, mstSet, n):
+    
+            # Initialize min value
+            min = sys.maxsize
+    
+            for v in range(n):
+                if key[v] < min and mstSet[v] == False:
+                    min = key[v]
+                    min_index = v
+    
+            return min_index
+    
+        # Function to construct and print MST for a graph
+        # represented using adjacency matrix representation
+        def primMST(self, n):
+    
+            # Key values used to pick minimum weight edge in cut
+            key = [sys.maxsize] * n
+            parent = [None] * n # Array to store constructed MST
+            # Make key 0 so that this vertex is picked as first vertex
+            key[0] = 0
+            mstSet = [False] * n
+    
+            parent[0] = -1 # First node is always the root of
+    
+            for cout in range(n):
+    
+                # Pick the minimum distance vertex from
+                # the set of vertices not yet processed.
+                # u is always equal to src in first iteration
+                u = self.minKey(key, mstSet, n)
+    
+                # Put the minimum distance vertex in
+                # the shortest path tree
+                mstSet[u] = True
+    
+                # Update dist value of the adjacent vertices
+                # of the picked vertex only if the current
+                # distance is greater than new distance and
+                # the vertex in not in the shortest path tree
+                for v in range(n):
+    
+                    # graph[u][v] is non zero only for adjacent vertices of m
+                    # mstSet[v] is false for vertices not yet included in MST
+                    # Update the key only if graph[u][v] is smaller than key[v]
+                    if self.matriz[u][v] > 0 and mstSet[v] == False and key[v] > self.matriz[u][v]:
+                            key[v] = self.matriz[u][v]
+                            parent[v] = u
+    
+            self.printMST(parent, n)
+
