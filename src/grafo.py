@@ -1,4 +1,5 @@
 # https://algoritmosempython.com.br/cursos/algoritmos-python/algoritmos-grafos/representacao-grafos/
+import json
 
 class Elemento(object):
     def __init__(self):
@@ -271,28 +272,49 @@ class Grafo(object):
         print("Cadeia euliriana no grafo: ", cadeia)
             
 
+    def conexo(self):
+        componentes = []
+       
+        for i in range(len(self.matriz)):
+            diferente = True
+            aux = []
+            self.busca(i+1, aux)
+            if (len(componentes) == 0):
+                componentes.append(aux.copy())
+            else:
+                for componenete in componentes:
+                    if sorted(aux) == sorted(componenete):
+                        diferente = False        
+                if (diferente):
+                    componentes.append(aux.copy())
+        print(f"O grafo tem {len(componentes)} componetes conexas, sendo elas:")
+        for componente in componentes:
+            print("componete",componente)
 
+def lerJson():
+    with open(".\\src\\Grafo.json", encoding='utf-8') as meu_json:
+        dados = json.load(meu_json)
 
+    arquivo = open("Grafo.txt", "w+")
+    arquivo.writelines(f"{ dados['data']['nodes']['length'] }\n")
 
+    arestas = []
+    for prop in dados["data"]["edges"]["_data"].values():
+        arestas.append(prop)
 
-        
-        
-
-
-        
-
-        
-        
-        
-        
-
-
-
-        
+    vertices = []
+    for prop in dados["data"]["nodes"]["_data"].values():
+        vertices.append(prop)
+    for aresta in arestas:
+        vertice1 = aresta['from'] if  aresta['from'] == vertices[aresta['from']-1]['label'] else vertices[aresta['from']-1]['label']
+        vertice2 =  aresta['to'] if  aresta['to'] == vertices[aresta['to']-1]['label'] else vertices[aresta['to']-1]['label']
+        peso = aresta['label']
+        arquivo.writelines(f"{vertice1} {vertice2} {peso}\n")
+    
 
 
 # arquivo = open('C:\\Users\\victo\\Desktop\\Grafos-TPI\\src\\grafo.txt', 'r')
-arquivo = open('.\\src\\grafo2.txt', 'r')
+arquivo = open('.\\src\\grafo.txt', 'r')
 
 n = int(arquivo.readline())
 
@@ -339,3 +361,8 @@ print("Possui Ciclo:", grafo.verificaCiclo())
 grafo.menorCaminhoVertice(1)
 
 grafo.buscaEmLargura(1)
+
+grafo.conexo()
+print(grafo.densidade())
+
+lerJson()
