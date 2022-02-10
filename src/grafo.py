@@ -291,26 +291,72 @@ class Grafo(object):
         for componente in componentes:
             print("componete",componente)
 
-def lerJson():
-    with open(".\\src\\Grafo.json", encoding='utf-8') as meu_json:
-        dados = json.load(meu_json)
+    def lerJson(self):
+        with open(".\\src\\Grafo.json", encoding='utf-8') as meu_json:
+            dados = json.load(meu_json)
 
-    arquivo = open("Grafo.txt", "w+")
-    arquivo.writelines(f"{ dados['data']['nodes']['length'] }\n")
+        arquivo = open("Grafo.txt", "w+")
+        arquivo.writelines(f"{ dados['data']['nodes']['length'] }\n")
 
-    arestas = []
-    for prop in dados["data"]["edges"]["_data"].values():
-        arestas.append(prop)
+        arestas = []
+        for prop in dados["data"]["edges"]["_data"].values():
+            arestas.append(prop)
 
-    vertices = []
-    for prop in dados["data"]["nodes"]["_data"].values():
-        vertices.append(prop)
-    for aresta in arestas:
-        vertice1 = aresta['from'] if  aresta['from'] == vertices[aresta['from']-1]['label'] else vertices[aresta['from']-1]['label']
-        vertice2 =  aresta['to'] if  aresta['to'] == vertices[aresta['to']-1]['label'] else vertices[aresta['to']-1]['label']
-        peso = aresta['label']
-        arquivo.writelines(f"{vertice1} {vertice2} {peso}\n")
+        vertices = []
+        for prop in dados["data"]["nodes"]["_data"].values():
+            vertices.append(prop)
+        for aresta in arestas:
+            vertice1 = aresta['from'] if  aresta['from'] == vertices[aresta['from']-1]['label'] else vertices[aresta['from']-1]['label']
+            vertice2 =  aresta['to'] if  aresta['to'] == vertices[aresta['to']-1]['label'] else vertices[aresta['to']-1]['label']
+            peso = aresta['label']
+            arquivo.writelines(f"{vertice1} {vertice2} {peso}\n")
     
+    def componentesConexas(self, n): # retorna a quantidade de componentes conexas e também a componente conexa de um determinado vértice i pelo array 'pais'
+        # este código é uma adaptação do algoritmo Union Find disponibilizado pelo canal NeetCode no youtube; 
+        # Link: https://www.youtube.com/watch?v=8f1XPm4WOUc&t
+
+        # Este algoritmo seleciona 'edge by edge' (aresta a aresta), qual a componente
+        # conexa que aquele determinado vértice pertence por meio de 1 vértice identificador
+        
+        pais = [i for i in range(n)]
+        tamanhoComponente = [1] * n
+
+        quantidadeComponentes = n
+        
+        for i in range(n):
+            for j in range(n):
+                if (self.matriz[i][j] != 0):
+                    quantidadeComponentes -= self.union(i, j, pais, tamanhoComponente)
+
+        return quantidadeComponentes, pais
+
+    def find(self, n1, pais = []): # encontra a qual componente o i-ésimo nó pertence
+
+        componente = n1
+        
+        while(componente != pais[componente]):
+            pais[componente] = pais[pais[componente]]
+            componente = pais[componente]
+        return componente
+
+    def union(self, n1, n2, pais = [], tamanhoComponente = []): # faz a união entre as componentes
+        p1, p2 = self.find(n1, pais), self.find(n2, pais)
+
+        if p1 == p2: # nao sera feita a uniao, pois ja pertencem a mesma componente
+            return 0
+        
+        if (tamanhoComponente[p2] > tamanhoComponente[p1]): # sera feita a uniao, pois nao pertencem a mesma componente
+            pais[p1] = p2
+            tamanhoComponente[p2] += tamanhoComponente[p1]
+        else:  # sera feita a uniao também
+            pais[p2] = p1
+            tamanhoComponente[p1] += tamanhoComponente[p2]
+        
+        return 1
+
+    def mostraVizinhosComponente(self, pais = []):
+        for i in range (len(pais)):
+            print("Componente do vértice ", i+1,": ", pais[i])
 
 
 # arquivo = open('C:\\Users\\victo\\Desktop\\Grafos-TPI\\src\\grafo.txt', 'r')
@@ -365,4 +411,8 @@ grafo.buscaEmLargura(1)
 grafo.conexo()
 print(grafo.densidade())
 
-lerJson()
+grafo.lerJson()
+
+quantidadeComponentes, vizinhos = grafo.componentesConexas(n)
+print("Numero de componentes conexas: ", quantidadeComponentes)
+grafo.mostraVizinhosComponente(vizinhos)
