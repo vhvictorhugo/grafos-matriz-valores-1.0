@@ -291,29 +291,76 @@ class Grafo(object):
         for componente in componentes:
             print("componete",componente)
 
-def lerJson():
-    with open(".\\src\\Grafo.json", encoding='utf-8') as meu_json:
-        dados = json.load(meu_json)
 
-    arquivo = open("Grafo.txt", "w+")
-    arquivo.writelines(f"{ dados['data']['nodes']['length'] }\n")
 
-    arestas = []
-    for prop in dados["data"]["edges"]["_data"].values():
-        arestas.append(prop)
-
-    vertices = []
-    for prop in dados["data"]["nodes"]["_data"].values():
-        vertices.append(prop)
-    for aresta in arestas:
-        vertice1 = aresta['from'] if  aresta['from'] == vertices[aresta['from']-1]['label'] else vertices[aresta['from']-1]['label']
-        vertice2 =  aresta['to'] if  aresta['to'] == vertices[aresta['to']-1]['label'] else vertices[aresta['to']-1]['label']
-        peso = aresta['label']
-        arquivo.writelines(f"{vertice1} {vertice2} {peso}\n")
+    def escreverJson(self):
+        with open(".\\src\\base.json", encoding='utf-8') as meu_json:
+            j = json.load(meu_json)
+        
     
+        for v in range (len(self.matriz)):
+            vertice = {
+                    "id": v+1,
+                    "x": 45,
+                    "y": 45,
+                    "label": f"{v+1}"
+            }
+            j["data"]["nodes"]["_data"][f"{v+1}"] = vertice
+
+        j["data"]["nodes"]["length"] = f"{len(self.matriz)}"
+
+        id = 1
+
+        matriz = [[] * len(self.matriz) for _ in range(len(self.matriz))]
+        for i in range(len(self.matriz)):
+            matriz[i] = self.matriz[i].copy()
+
+        for i in range (len(matriz)):
+            for x in range (len(matriz)): 
+                if(matriz[i][x] != 0):
+
+                    aresta = { 
+                                "from": f"{i+1}",
+                                "to": f"{x+1}",
+                                "label": f"{matriz[i][x]}",
+                                "id": f"{id}",
+                                "color": {}
+                            }   
+                    matriz[i][x]  = 0
+                    matriz[x][i]  = 0            
+                    j["data"]["edges"]["_data"][f"{id}"] = aresta
+                    id += 1
+
+            
+        with open('data.json', 'w') as f:
+            json.dump(j, f)
+
+def lerJson():
+        with open(".\\src\\Grafo.json", encoding='utf-8') as meu_json:
+            dados = json.load(meu_json)
+
+        arquivo = open(".\\src\\grafo.txt", "w+")
+        arquivo.writelines(f"{ dados['data']['nodes']['length'] }\n")
+
+        arestas = []
+        for prop in dados["data"]["edges"]["_data"].values():
+            arestas.append(prop)
+
+        vertices = []
+        for prop in dados["data"]["nodes"]["_data"].values():
+            vertices.append(prop)
+        for aresta in arestas:
+            vertice1 = aresta['from'] if  aresta['from'] == vertices[aresta['from']-1]['label'] else vertices[aresta['from']-1]['label']
+            vertice2 =  aresta['to'] if  aresta['to'] == vertices[aresta['to']-1]['label'] else vertices[aresta['to']-1]['label']
+            peso = aresta['label']
+            arquivo.writelines(f"{vertice1} {vertice2} {peso}\n")   
 
 
 # arquivo = open('C:\\Users\\victo\\Desktop\\Grafos-TPI\\src\\grafo.txt', 'r')
+
+
+
+
 arquivo = open('.\\src\\grafo.txt', 'r')
 
 n = int(arquivo.readline())
@@ -327,6 +374,8 @@ for linha in arquivo:  # implementar método leitura de arquivo
     grafo.atribuiPeso((int(linha[0])), (int(linha[1])), (float(linha[2].replace('\n', ''))))
 
 arquivo.close()
+
+grafo.escreverJson()
 
 print("Grafo: ", grafo.matriz)
 
@@ -365,4 +414,3 @@ grafo.buscaEmLargura(1)
 grafo.conexo()
 print(grafo.densidade())
 
-lerJson()
