@@ -109,20 +109,30 @@ def menuFuncoes():
             break
 def printArvoreMinima():
     n=mGrafo.ordem()
-    mst = mGrafo.primMST(n)
-    # Criando e escrevendo em arquivos de texto (modo 'w'). escrita
-    arquivo = open('arq01.txt','w')
+    cont=0
+    for i in range(n):
+        if mGrafo.componentesConexas(n)[1] == [i]*n:
+            cont+=1
+    if cont != 0:
+        n=mGrafo.ordem()
+        mst = mGrafo.primMST(n)
+        # Criando e escrevendo em arquivos de texto (modo 'w'). escrita
+        arquivo = open('arq01.txt','w')
 
-    arquivo.write(str (n) + '\n')
+        arquivo.write(str (n) + '\n')
 
-    for i in range(1, n):
-        aresta1, aresta2, peso = mGrafo.getParams(mst, i)
-        arquivo.write(str (aresta1) + ' ' + str (aresta2) + ' ' + str (peso) + '\n')
-    arquivo.close()
+        for i in range(1, n):
+            aresta1, aresta2, peso = mGrafo.getParams(mst, i)
+            arquivo.write(str (aresta1) + ' ' + str (aresta2) + ' ' + str (peso) + '\n')
+        arquivo.close()
+    else:
+        print("Componete conexo, logo nao eh possivel!")
 def printCompConex():
     n=mGrafo.ordem()
     print("Numero de componentes conexas: ", mGrafo.componentesConexas(n)[0])
     mGrafo.mostraVizinhosComponente(mGrafo.componentesConexas(n)[1])
+
+
 while True:
     printMenu()
     print("1) Escolher o arquivo")
