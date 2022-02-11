@@ -310,8 +310,9 @@ class Grafo(object):
                     id += 1
 
             
-        with open('data.json', 'w') as f:
+        with open('data.json', 'w+') as f:
             json.dump(j, f)
+        print("Arquivo convertido, o nome do arquivo e data.json")
  
     def componentesConexas(self, n): # retorna a quantidade de componentes conexas e também a componente conexa de um determinado vértice i pelo array 'pais'
         # este código é uma adaptação do algoritmo Union Find disponibilizado pelo canal NeetCode no youtube; 
@@ -360,7 +361,7 @@ class Grafo(object):
         for i in range (len(pais)):
             print("Componente do vértice ", i+1,": ", pais[i])
 
-    def lerJson(nomeArquivo):
+    def lerJson(self, nomeArquivo):
         try:
             with open(f".\\src\\{nomeArquivo}", encoding='utf-8') as meu_json:
                 dados = json.load(meu_json)
@@ -369,7 +370,6 @@ class Grafo(object):
             
 
         nomeArquivo = nomeArquivo.replace("json","txt")
-        print("n:", nomeArquivo)
         try:
             arquivo = open(f".\\src\\{nomeArquivo}", "w+")
         except:

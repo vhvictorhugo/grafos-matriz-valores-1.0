@@ -12,13 +12,13 @@ def printMenu():
 def inicializar(tipoEntrada):
     if tipoEntrada == 1:
         nomeArquivo = input("Digite o nome do arquivo Json: ")
-        grafo.lerJson(nomeArquivo)
+        mGrafo.lerJson(nomeArquivo)
         nomeArquivo = nomeArquivo.replace("json","txt")
     else:
         nomeArquivo = input("Digite o nome do arquivo txt: ")
   
     arquivo = open(f'.\\src\\{nomeArquivo}', 'r')
-    print("Grafo inicializado")
+
     n = int(arquivo.readline())
     
 
@@ -77,7 +77,7 @@ def menuFuncoes():
             print("Vizinho de um vertice:",mGrafo.retornaVizinhos(vertice))
               
         elif escolha == 5:
-            vertice = int(input("Escolha um verticer:\n->"))
+            vertice = int(input("Escolha um vertice:\n->"))
             print("Vertice de grau:",mGrafo.grauVertice(vertice))
              
         elif escolha == 6:
@@ -86,7 +86,8 @@ def menuFuncoes():
                           
         elif escolha == 7:
             vertice = int(input("Escolha um vertice pra comecar:\n->"))
-            print("Busca em Largur: ", mGrafo.buscaEmLargura(vertice))
+            print("busca em largura:")
+            mGrafo.buscaEmLargura(vertice)
 
         elif escolha == 8:
            printCompConex()
@@ -95,10 +96,11 @@ def menuFuncoes():
             print("O Grafo possui ciclo") if mGrafo.verificaCiclo() else print("O Grafo nao possui ciclo")
 
         elif escolha == 10:
-             print("Verificar Euleriano: ",mGrafo.verificarEuliriano())
+            mGrafo.verificarEuliriano()
         
         elif escolha == 11:
-            print("Menor caminho: ",mGrafo.menorCaminhoVertice(1))
+            vertice = int(input("Escolha um vertice pra comecar:\n->"))
+            mGrafo.menorCaminhoVertice(vertice)
             
         elif escolha == 12:
             printArvoreMinima()
@@ -126,7 +128,7 @@ while True:
     print("1) Escolher o arquivo")
     print("2) Usar as funcoes do grafo")
     print("3) Converter o grafo para Json")
-    print("4) Sair")
+    print("0) Sair")
     escolha = int(input("->"))
     if escolha == 1:
         escolherArquivo(mGrafo)
@@ -142,8 +144,9 @@ while True:
             print("Primeiro Inicialize o Grafo")
         else:
             mGrafo.escreverJson()
+            
 
-    if escolha == 4:
+    if escolha == 0:
             break
     
        
