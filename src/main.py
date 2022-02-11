@@ -56,6 +56,7 @@ def menuFuncoes():
         print("10) Verificar se um grafo é euleriano ")
         print("11) Distancia e caminho minimo ")
         print("12) A árvore geradora mínima de um grafo ")
+        print("13) Mostrar a matriz do grafo")
         print("0) Sair")
         
         escolha = int(input("->"))
@@ -106,7 +107,11 @@ def menuFuncoes():
             
         elif escolha == 12:
             printArvoreMinima()
-            
+        
+        elif escolha == 13:
+            print("Matriz do grafo:")
+            for linha in mGrafo.matriz:
+                print(linha)
         else:
             break
 def printArvoreMinima():
