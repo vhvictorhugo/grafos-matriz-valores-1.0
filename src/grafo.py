@@ -50,7 +50,6 @@ class Grafo(object):
             if self.matriz[vertice - 1][i] != 0:
                 vizinhos.append(i + 1)
         return vizinhos
-        # execucao
 
     def grauVertice(self, vertice):
         grau = 0
@@ -228,7 +227,6 @@ class Grafo(object):
         #determinar uma cadeia euliriana fechada com o algoritmo de Fleury
         self.cadeiaEuliriana()
         
-  
     def cadeiaEuliriana(self):
 
         v0 = 1
@@ -272,9 +270,6 @@ class Grafo(object):
             cadeia.append(aresta+1)
 
         print("Cadeia euliriana no grafo: ", cadeia)
-            
-
-
 
     def escreverJson(self):
         with open(".\\src\\base.json", encoding='utf-8') as meu_json:
@@ -317,8 +312,7 @@ class Grafo(object):
             
         with open('data.json', 'w') as f:
             json.dump(j, f)
-
-    
+ 
     def componentesConexas(self, n): # retorna a quantidade de componentes conexas e também a componente conexa de um determinado vértice i pelo array 'pais'
         # este código é uma adaptação do algoritmo Union Find disponibilizado pelo canal NeetCode no youtube; 
         # Link: https://www.youtube.com/watch?v=8f1XPm4WOUc&t
@@ -448,10 +442,3 @@ class Grafo(object):
         self.printMST(parent, n)
 
         return parent
-
-
-
-
-
-
-
