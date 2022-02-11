@@ -16,9 +16,11 @@ def inicializar(tipoEntrada):
         nomeArquivo = nomeArquivo.replace("json","txt")
     else:
         nomeArquivo = input("Digite o nome do arquivo txt: ")
-  
-    arquivo = open(f'.\\src\\{nomeArquivo}', 'r')
-
+    try:
+        arquivo = open(f'.\\src\\{nomeArquivo}', 'r')
+    except:
+        print("Erro ao abrir o arquivo")
+        return False
     n = int(arquivo.readline())
     
 

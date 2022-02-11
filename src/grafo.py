@@ -1,5 +1,6 @@
 # https://algoritmosempython.com.br/cursos/algoritmos-python/algoritmos-grafos/representacao-grafos/
 import json
+from pickle import FALSE
 from tkinter import N
 import sys
 
@@ -367,6 +368,7 @@ class Grafo(object):
                 dados = json.load(meu_json)
         except:
             print("arquivo nao encontrado, verifique se esta na pasta src")
+            return False
             
 
         nomeArquivo = nomeArquivo.replace("json","txt")
@@ -374,6 +376,7 @@ class Grafo(object):
             arquivo = open(f".\\src\\{nomeArquivo}", "w+")
         except:
             print("Erro ao abrir o arquivo")
+            return False
 
         arquivo.writelines(f"{ dados['data']['nodes']['length'] }\n")
 
